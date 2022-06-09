@@ -1,0 +1,72 @@
+//SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.4; // Solidity files have to start with this pragma.
+
+// contract structure with their property
+contract ResourceVoting {
+    struct Resource {
+        uint8 id;
+        address creator;
+        string name;
+        string designation;
+        string email;
+        string photo;
+        uint8 total_votes;
+    }
+
+    mapping(uint256 => Resource) public resources;
+    event savingsEvent(uint256 indexed _resourceId);
+    uint8 public numResource;
+
+    constructor() {
+        numResource = 0;
+        addResource(
+            "Kalu Singh Rao",
+            "Senior Software Engineer",
+            "kalusinghrao07@gmail.com",
+            "https://avatars.githubusercontent.com/u/7767539"            
+        );
+    }
+
+    function addResource(
+        string memory name,
+        string memory designation,
+        string memory email,
+        string memory photo
+    ) public {
+        Resource storage resource = resources[numResource];
+        resource.creator = msg.sender;
+        resource.total_votes = 0;
+        resources[numResource] = Resource(
+            numResource,
+            resource.creator,
+            name,
+            designation,
+            email,
+            photo,
+            resource.total_votes
+        );
+        numResource++;
+    }
+
+    //return a particular resource
+    function getResource(uint256 resourceId) public view returns (Resource memory)
+    {
+        return resources[resourceId];
+    }
+
+    //return the array of resources
+    function getResources() public view returns (Resource[] memory) {
+        Resource[] memory id = new Resource[](numResource);
+        for (uint256 i = 0; i < numResource; i++) {
+            Resource storage resource = resources[i];
+            id[i] = resource;
+        }
+        return id;
+    }
+
+    // Vote a resource
+    function voteResource(uint256 resourceId) public {
+        Resource storage resource = resources[resourceId];
+        resource.total_votes++;
+    }
+}
